@@ -1,0 +1,43 @@
+{
+  "name": "nativescript-ichi-mqtt",
+  "version": "0.1.0",
+  "description": "mqtt client for NativeScript",
+  "keywords": [
+    "mqtt",
+    "mqtt client",
+    "nativescript",
+    "javascript"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mozhju/nativescript-ichi-mqtt.git"
+  },
+  "author": {
+    "name": "mozhju"
+  },
+  "bugs": {
+      "url": "https://github.com/mozhju/nativescript-ichi-mqtt/issues"
+  },
+  "license": {
+      "type": "MIT",
+      "url": "https://github.com/mozhju/nativescript-ichi-mqtt/blob/master/LICENSE"
+  },
+  "homepage": "https://github.com/mozhju/nativescript-ichi-mqtt",
+  "readmeFilename": "README.md",
+  "main": "index",
+  "typyings": "index.d.ts",
+  "scripts": {
+    "prepublish": "tsc"
+  },
+  "nativescript": {
+    "platforms": {
+      "android": "2.4.0"
+    }
+  },
+  "devDependencies": {
+    "typescript": "^2.2.1"
+  },
+  "dependencies": {
+
+  }
+}
