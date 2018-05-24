@@ -27,8 +27,6 @@ export declare class MqttClient {
     private client;
 
     // 
-    constructor(productKey: string, deviceName:string, deviceSecret:string);
-    // 
     constructor(productKey: string, deviceName:string, deviceSecret:string,
         serverUri?: string, subscriptionTopic?:string, publishTopic?:string);
 
@@ -48,17 +46,13 @@ export declare class MqttClient {
     public setCallListener(callListener: CallListener): void;
 
     // 初始化SDK，需要确保app 的 Activity已经生成
-    public initialization(): boolean;
-    // 初始化SDK
-    public initialization(activity: any): boolean;
+    public initialization(activity?: any): boolean;
     
     // 订阅主题
-    public subscribeTopic(): void;
-    public subscribeTopic(topic: string): void;
+    public subscribeTopic(topic?: string): void;
 
     // 向MQTT服务器publish消息
-    public publishMessage(payloadObj: any): void;
-    public publishMessage(topic: string, payloadObj: any): void;
+    public publishMessage(payloadObj: any, topic?: string): void;
 
     // 反初始化SDK
     public deinitialization(): void;

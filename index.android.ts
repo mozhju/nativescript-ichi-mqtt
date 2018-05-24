@@ -125,8 +125,8 @@ export class MqttClient {
 
     // 
     constructor(productKey: string, deviceName:string, deviceSecret:string,
-        serverUri?: string, subscriptionTopic?:string, publishTopic?:string)
-    {
+        serverUri?: string, subscriptionTopic?:string, publishTopic?:string) {
+            
         if (serverUri && subscriptionTopic && publishTopic) {
             this.client = new cn.ichi.android.mqtt.MqttClient(serverUri, productKey, deviceName,
                 deviceSecret, subscriptionTopic, publishTopic);
