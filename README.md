@@ -1,4 +1,4 @@
-# nativescript-ichi-printer
+# nativescript-ichi-mqtt
 
 mqtt client for NativeScript.
 
@@ -22,9 +22,8 @@ Here is a TypeScript example:
 import {MqttClient} from "nativescript-ichi-mqtt";
 
 // new Mqtt Client
-var mqttClient = new MqttClient("productKey", "deviceName", "deviceSecret");
-// var mqttClient = new MqttClient("productKey", "deviceName", "deviceSecret",
-//        "serverUri", "subscriptionTopic", "publishTopic");
+ var mqttClient = new MqttClient("productKey", "deviceName", "deviceSecret",
+        "serverUri", "subscriptionTopic", "publishTopic");
 
 // LogLevel : 1 DEBUG, 2 INFO, 3 WARN, 4 ERROR
 mqttClient.setLogLevel(3);
@@ -82,16 +81,15 @@ var callListener = {
 mqttClient.setCallListener(callListener);
 
 
-mqttClient.initialization();
+mqttClient.startListener();
 
-// mqttClient.subscribeTopic();
 // mqttClient.subscribeTopic("subscribeTopic2");
+// mqttClient.unSubscribeTopic("subscribeTopic");
 
-//mqttClient.publishMessage("publishMessage");
 mqttClient.publishMessage("publishMessage", "publishTopic2");
 
 
-// mqttClient.deinitialization();
+// mqttClient.stopListener();
 
 ```
 

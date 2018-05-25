@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        m_MqttClient = new MqttClient(productKey, deviceName, deviceSecret);
+        m_MqttClient = new MqttClient(productKey, deviceName, deviceSecret, null, null, null);
 
         m_MqttClient.setLogLevel(2);
 
@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailed(String var1, AError var2) {
+            public void onFailed(String var1, Object var2) {
                 Log.i("MainActivity", "SubscribeListener onFailed: " + var1);
             }
 
@@ -89,12 +89,12 @@ public class MainActivity extends AppCompatActivity {
         });
         m_MqttClient.setCallListener(new CallListener() {
             @Override
-            public void onSuccess(ARequest request, AResponse response) {
+            public void onSuccess(Object request, Object response) {
                 Log.i("MainActivity", "CallListener onSuccess" );
             }
 
             @Override
-            public void onFailed(ARequest request, AError error) {
+            public void onFailed(Object request, Object error) {
                 Log.i("MainActivity", "CallListener onFailed" );
             }
 
@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        m_MqttClient.initialization(this);
+        m_MqttClient.startListener(this);
 
         edtName = (EditText)findViewById(R.id.name);
         edtQty = (EditText)findViewById(R.id.qty);
@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
         btnShow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                m_MqttClient.publishMessage(edtName.getText().toString());
+                m_MqttClient.publishMessage(null, edtName.getText().toString());
             }
         });
 
@@ -148,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
 
-        m_MqttClient.deinitialization();
+        m_MqttClient.stopListener();
 
         super.onDestroy();
     }

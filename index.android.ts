@@ -55,41 +55,38 @@ declare module cn {
 
                 export class MqttClient {
                     // 
-                    constructor(productKey: string, deviceName:string, deviceSecret:string);
-                    // 
-                    constructor(serverUri: string, productKey: string, deviceName:string, deviceSecret:string,
-                        subscriptionTopic:string, publishTopic:string);
+                    constructor(productKey: string, deviceName:string, deviceSecret:string,
+                        serverUri: string, subscriptionTopic:string, publishTopic:string);
 
-                    // 设置SDK内部Log等级, 在initialization前设置。LogLevel : 1 DEBUG, 2 INFO, 3 WARN, 4 ERROR
+                    // 设置SDK内部Log等级, 在startListener前设置。LogLevel : 1 DEBUG, 2 INFO, 3 WARN, 4 ERROR
                     public setLogLevel(level: number): void;
 
-                    // 设置连接到MQTT服务器结果的回调, 在initialization前设置
+                    // 设置连接到MQTT服务器结果的回调, 在startListener前设置
                     public setConnectionStateListener(stateListener: ConnectionStateListener): void;
 
-                    // 设置订阅结果的回调, 在initialization前设置
+                    // 设置订阅结果的回调, 在startListener前设置
                     public setSubscribeListener(subscribeListener: SubscribeListener): void;
 
-                    // 设置MQTT服务器push的消息的回调, 在initialization前设置
+                    // 设置MQTT服务器push的消息的回调, 在startListener前设置
                     public setPushListener(pushListener: PushListener): void;
 
-                    // 设置Publish请求结果的回调, 在initialization前设置
+                    // 设置Publish请求结果的回调, 在startListener前设置
                     public setCallListener(callListener: CallListener): void;
 
-                    // 初始化SDK，需要确保app 的 Activity已经生成
-                    public initialization(): boolean;
-                    // 初始化SDK
-                    public initialization(activity: any): boolean;
+                    // 开始监听，需要确保app 的 Activity已经生成
+                    public startListener(activity: any): boolean;
                     
                     // 订阅主题
-                    public subscribeTopic(): void;
                     public subscribeTopic(topic: string): void;
 
+                    // 取消订阅
+                    public unSubscribeTopic(topic: string): void;
+
                     // 向MQTT服务器publish消息
-                    public publishMessage(payloadObj: any): void;
                     public publishMessage(topic: string, payloadObj: any): void;
 
-                    // 反初始化SDK
-                    public deinitialization(): void;
+                    // 停止监听
+                    public stopListener(): void;
                 }
             }
         }
@@ -128,19 +125,20 @@ export class MqttClient {
         serverUri?: string, subscriptionTopic?:string, publishTopic?:string) {
             
         if (serverUri && subscriptionTopic && publishTopic) {
-            this.client = new cn.ichi.android.mqtt.MqttClient(serverUri, productKey, deviceName,
-                deviceSecret, subscriptionTopic, publishTopic);
+            this.client = new cn.ichi.android.mqtt.MqttClient(productKey, deviceName,
+                deviceSecret, serverUri, subscriptionTopic, publishTopic);
         } else {
-            this.client = new cn.ichi.android.mqtt.MqttClient(productKey, deviceName, deviceSecret);
+            this.client = new cn.ichi.android.mqtt.MqttClient(productKey, deviceName,
+                deviceSecret, null, null, null);
         }
     }
 
-    // 设置SDK内部Log等级, 在initialization前设置。LogLevel : 1 DEBUG, 2 INFO, 3 WARN, 4 ERROR
+    // 设置SDK内部Log等级, 在startListener前设置。LogLevel : 1 DEBUG, 2 INFO, 3 WARN, 4 ERROR
     public setLogLevel(level: number): void {
         return this.client.setLogLevel(level);
     }
 
-    // 设置连接到MQTT服务器结果的回调, 在initialization前设置
+    // 设置连接到MQTT服务器结果的回调, 在startListener前设置
     public setConnectionStateListener(stateListener: ConnectionStateListener): void {
         var listener = new cn.ichi.android.mqtt.ConnectionStateListener({
             onConnectFail: function(message: string) {
@@ -156,7 +154,7 @@ export class MqttClient {
         return this.client.setConnectionStateListener(listener);
     }
 
-    // 设置订阅结果的回调, 在initialization前设置
+    // 设置订阅结果的回调, 在startListener前设置
     public setSubscribeListener(subscribeListener: SubscribeListener): void {
         var listener = new cn.ichi.android.mqtt.SubscribeListener({
             onSuccess: function(topic: string) {
@@ -172,7 +170,7 @@ export class MqttClient {
         return this.client.setSubscribeListener(listener);
     }
 
-    // 设置MQTT服务器push的消息的回调, 在initialization前设置
+    // 设置MQTT服务器push的消息的回调, 在startListener前设置
     public setPushListener(pushListener: PushListener): void {
         var listener = new cn.ichi.android.mqtt.PushListener({
             onCommand: function(topic: string, data: string) {
@@ -185,7 +183,7 @@ export class MqttClient {
         return this.client.setPushListener(listener);
     }
 
-    // 设置Publish请求结果的回调, 在initialization前设置
+    // 设置Publish请求结果的回调, 在startListener前设置
     public setCallListener(callListener: CallListener): void {
         var listener = new cn.ichi.android.mqtt.CallListener({
             onSuccess: function(request: any, response: any) {
@@ -201,12 +199,12 @@ export class MqttClient {
         return this.client.setCallListener(listener);
     }
 
-    // 初始化SDK，需要确保app 的 Activity已经生成
-    public initialization(activity?: any): boolean {
+    // 开始监听，需要确保app 的 Activity已经生成
+    public startListener(activity?: any): boolean {
         if (activity) {
-            return this.client.initialization(activity);
+            return this.client.startListener(activity);
         } else {
-            return this.client.initialization();
+            return this.client.startListener(null);
         }
     }
     
@@ -215,7 +213,16 @@ export class MqttClient {
         if (topic) {
             return this.client.subscribeTopic(topic);
         } else {
-            return this.client.subscribeTopic();
+            return this.client.subscribeTopic(null);
+        }
+    }
+
+    // 取消订阅
+    public unSubscribeTopic(topic?: string): void {
+        if (topic) {
+            return this.client.unSubscribeTopic(topic);
+        } else {
+            return this.client.unSubscribeTopic(null);
         }
     }
 
@@ -224,13 +231,13 @@ export class MqttClient {
         if (topic) {
             return this.client.publishMessage(topic, payloadObj);
         } else {
-            return this.client.publishMessage(payloadObj);
+            return this.client.publishMessage(null, payloadObj);
         }
     }
 
-    // 反初始化SDK
-    public deinitialization(): void {
-        return this.client.deinitialization();
+    // 停止监听
+    public stopListener(): void {
+        return this.client.stopListener();
     }
 }
 

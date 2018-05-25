@@ -1,6 +1,6 @@
 {
   "name": "nativescript-ichi-mqtt",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "mqtt client for NativeScript",
   "keywords": [
     "mqtt",

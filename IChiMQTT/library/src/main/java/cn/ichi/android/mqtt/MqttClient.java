@@ -49,7 +49,7 @@ public class MqttClient {
         public  void onConnected() { // 通道已连接
             log("Connected to: " + m_ServerUri);
 
-            subscribeTopic();
+            subscribeTopic(null);
         }
 
         @Override
@@ -114,22 +114,27 @@ public class MqttClient {
     private PersistentNet m_PersistentNet = null;
     private PersistentEventDispatcher m_Dispatcher = null;
 
-
-    public MqttClient(String productKey, String deviceName, String deviceSecret) {
-        this("ssl://" + productKey + ".iot-as-mqtt.cn-shanghai.aliyuncs.com:1883",
-                productKey, deviceName, deviceSecret, "/" + productKey + "/" + deviceName + "/data",
-                "/" + productKey + "/" + deviceName + "/PrintSuccess");
-    }
-
-    public MqttClient(String serverUri, String productKey, String deviceName, String deviceSecret,
-                      String subscriptionTopic, String publishTopic) {
+    public MqttClient(String productKey, String deviceName, String deviceSecret,
+                      String serverUri, String subscriptionTopic, String publishTopic) {
         m_ProductKey = productKey;
         m_DeviceName = deviceName;
         m_DeviceSecret = deviceSecret;
 
-        m_ServerUri = serverUri;
-        m_SubscriptionTopic = subscriptionTopic;
-        m_PublishTopic = publishTopic;
+        if (serverUri != null && !serverUri.isEmpty()) {
+            m_ServerUri = serverUri;
+        } else {
+            m_ServerUri = "ssl://" + productKey + ".iot-as-mqtt.cn-shanghai.aliyuncs.com:1883";
+        }
+        if (subscriptionTopic != null && !subscriptionTopic.isEmpty()) {
+            m_SubscriptionTopic = subscriptionTopic;
+        } else {
+            m_SubscriptionTopic = "/" + productKey + "/" + deviceName + "/data";
+        }
+        if (publishTopic != null && !publishTopic.isEmpty()) {
+            m_PublishTopic = publishTopic;
+        } else {
+            m_PublishTopic = "/" + productKey + "/" + deviceName + "/PrintSuccess";
+        }
 
         m_PersistentNet = PersistentNet.getInstance();
         m_Dispatcher = PersistentEventDispatcher.getInstance();
@@ -141,20 +146,23 @@ public class MqttClient {
     }
 
 
-    public boolean initialization(){
-        return initialization(Utils.getActivity());
-    }
-
-    public boolean initialization(Object object) {
-        if (object == null || !(object instanceof Context)) {
+    public boolean startListener(Object object) {
+        if (object != null && !(object instanceof Context)) {
             return false;
         }
 
-        //Context context = ((Activity)object).getApplicationContext();
+        Context context = (Context)object;
+        if(context == null) {
+            context = Utils.getActivity();
+        }
+
+        if(context == null) {
+            return false;
+        }
 
         MqttInitParams initParams = new MqttInitParams(m_ProductKey, m_DeviceName, m_DeviceSecret);
 
-        m_PersistentNet.init((Context)object, initParams);
+        m_PersistentNet.init(context, initParams);
 
         // 注册通道监听
         m_Dispatcher.registerOnTunnelStateListener(m_StateListener, true);
@@ -164,6 +172,7 @@ public class MqttClient {
 
         return true;
     }
+
 
     // 连接到MQTT服务器结果回调
     public void setConnectionStateListener(final ConnectionStateListener stateListener) {
@@ -181,7 +190,7 @@ public class MqttClient {
                     log("Connected to: " + m_ServerUri);
                     stateListener.onConnected();
 
-                    subscribeTopic();
+                    subscribeTopic(null);
                 }
 
                 @Override
@@ -194,6 +203,7 @@ public class MqttClient {
             };
         }
     }
+
 
     // 订阅结果回调
     public void setSubscribeListener(final SubscribeListener subscribeListener) {
@@ -221,6 +231,7 @@ public class MqttClient {
         }
     }
 
+
     // 收到MQTT服务器push的消息时回调
     public void setPushListener(final PushListener pushListener) {
         if (pushListener != null) {
@@ -244,6 +255,7 @@ public class MqttClient {
             };
         }
     }
+
 
     // Publish请求结果回调
     public void setCallListener(final CallListener callListener) {
@@ -273,27 +285,31 @@ public class MqttClient {
         }
     }
 
-    public void subscribeTopic() {
-        //订阅
-        subscribeTopic(m_SubscriptionTopic);
-    }
 
     public void subscribeTopic(String topic) {
-        //取消订阅
-        m_PersistentNet.unSubscribe(m_SubscriptionTopic, m_SubscribeListener);
+        if (topic == null) {
+            topic = m_SubscriptionTopic;
+        }
 
-        m_SubscriptionTopic = topic;
         //订阅
-        m_PersistentNet.subscribe(m_SubscriptionTopic, m_SubscribeListener);
+        m_PersistentNet.subscribe(topic, m_SubscribeListener);
     }
 
-    public void publishMessage(Object payloadObj) {
-        // Publish 请求
-        publishMessage(m_PublishTopic, payloadObj);
+
+    public void unSubscribeTopic(String topic) {
+        if (topic == null){
+            topic = m_SubscriptionTopic;
+        }
+
+        //取消订阅
+        m_PersistentNet.unSubscribe(topic, m_SubscribeListener);
     }
+
 
     public void publishMessage(String topic, Object payloadObj) {
-        m_PublishTopic = topic;
+        if (topic == null) {
+            topic = m_PublishTopic;
+        }
 
         // Publish 请求
         MqttPublishRequest publishRequest = new MqttPublishRequest();
@@ -304,7 +320,8 @@ public class MqttClient {
         m_PersistentNet.asyncSend(publishRequest, m_CallListener );
     }
 
-     public void deinitialization() {
+
+     public void stopListener() {
          //取消订阅
          m_PersistentNet.unSubscribe(m_SubscriptionTopic, m_SubscribeListener);
 
@@ -314,6 +331,7 @@ public class MqttClient {
          //取消监听
          m_Dispatcher.unregisterOnTunnelStateListener(m_StateListener);
     }
+
 
     private void log(String msg) {
         Log.d(TAG, msg);
