@@ -38,78 +38,82 @@ public class MqttClient {
     private String m_PublishTopic = null;
 
     // 连接到MQTT服务器时回调
-    private IConnectionStateListener m_StateListener = new IConnectionStateListener() {
-        @Override
-        public  void onConnectFail(String msg) { //通道连接失败
-            log("Failed to connect to: " + m_ServerUri);
-            log("Failed message: " + msg);
-        }
-
-        @Override
-        public  void onConnected() { // 通道已连接
-            log("Connected to: " + m_ServerUri);
-
-            subscribeTopic(null);
-        }
-
-        @Override
-        public  void onDisconnect() { // 通道断连
-            log("Disconnect to: " + m_ServerUri);
-        }
-    };
+    private IConnectionStateListener m_StateListener = new StateListener();
+//    private IConnectionStateListener m_StateListener = new IConnectionStateListener() {
+//        @Override
+//        public  void onConnectFail(String msg) { //通道连接失败
+//            log("Failed to connect to: " + m_ServerUri);
+//            log("Failed message: " + msg);
+//        }
+//
+//        @Override
+//        public  void onConnected() { // 通道已连接
+//            log("Connected to: " + m_ServerUri);
+//
+//            subscribeTopic(null);
+//        }
+//
+//        @Override
+//        public  void onDisconnect() { // 通道断连
+//            log("Disconnect to: " + m_ServerUri);
+//        }
+//    };
     // 订阅时回调
-    private IOnSubscribeListener m_SubscribeListener = new IOnSubscribeListener() {
-        @Override
-        public void onSuccess(String var1) {
-            log("onSuccess: " + var1);
-        }
-
-        @Override
-        public void onFailed(String var1, AError var2) {
-            log("onFailed: " + var1);
-            log("onFailed: " + var2.getMsg());
-        }
-
-        @Override
-        public boolean needUISafety() {
-            log("SubscribeListener needUISafety");
-            return true;
-        }
-    };
+    private IOnSubscribeListener m_SubscribeListener = new OnSubscribeListener();
+//    private IOnSubscribeListener m_SubscribeListener = new IOnSubscribeListener() {
+//        @Override
+//        public void onSuccess(String var1) {
+//            log("onSuccess: " + var1);
+//        }
+//
+//        @Override
+//        public void onFailed(String var1, AError var2) {
+//            log("onFailed: " + var1);
+//            log("onFailed: " + var2.getMsg());
+//        }
+//
+//        @Override
+//        public boolean needUISafety() {
+//            log("SubscribeListener needUISafety");
+//            return true;
+//        }
+//    };
     // 收到MQTT服务器push的消息时回调
-    private IOnPushListener m_PushListener = new IOnPushListener() {
-
-        @Override
-        public void onCommand(String topic,String data)
-        {
-            log("onCommand to: " + topic);
-            log("onCommand to: " + data);
-        }
-
-        @Override
-        public boolean shouldHandle(String topic) {
-            log("shouldHandle to: " + topic);
-            return true;
-        }
-    };
+    private IOnPushListener m_PushListener = new OnPushListener();
+//    private IOnPushListener m_PushListener = new IOnPushListener() {
+//
+//        @Override
+//        public void onCommand(String topic,String data)
+//        {
+//            log("onCommand to: " + topic);
+//            log("onCommand to: " + data);
+//        }
+//
+//        @Override
+//        public boolean shouldHandle(String topic) {
+//            log("shouldHandle to: " + topic);
+//            return true;
+//        }
+//    };
     // Publish请求时回调
-    private IOnCallListener m_CallListener = new IOnCallListener() {
-        @Override
-        public void onSuccess(ARequest request, AResponse response) {
-            log("send , onSuccess");
-        }
-
-        @Override
-        public void onFailed(ARequest request, AError error) {
-            log("send , onFailed: " + error.getMsg());
-        }
-
-        @Override
-        public boolean needUISafety() {
-            log("CallListener needUISafety");
-            return true;
-        }
-    };
+    private IOnCallListener m_CallListener = new OnCallListener();
+//    private IOnCallListener m_CallListener = new IOnCallListener() {
+//        @Override
+//        public void onSuccess(ARequest request, AResponse response) {
+//            log("send , onSuccess");
+//        }
+//
+//        @Override
+//        public void onFailed(ARequest request, AError error) {
+//            log("send , onFailed: " + error.getMsg());
+//        }
+//
+//        @Override
+//        public boolean needUISafety() {
+//            log("CallListener needUISafety");
+//            return true;
+//        }
+//    };
 
     private PersistentNet m_PersistentNet = null;
     private PersistentEventDispatcher m_Dispatcher = null;
@@ -177,30 +181,30 @@ public class MqttClient {
     // 连接到MQTT服务器结果回调
     public void setConnectionStateListener(final ConnectionStateListener stateListener) {
         if (stateListener != null) {
-            m_StateListener = new IConnectionStateListener() {
-                @Override
-                public  void onConnectFail(String msg) { //通道连接失败
-                    log("Failed to connect to: " + m_ServerUri);
-                    log("Failed message: " + msg);
-                    stateListener.onConnectFail(msg);
-                }
-
-                @Override
-                public  void onConnected() { // 通道已连接
-                    log("Connected to: " + m_ServerUri);
-                    stateListener.onConnected();
-
-                    subscribeTopic(null);
-                }
-
-                @Override
-                public  void onDisconnect() { // 通道断连
-                    log("Disconnect to: " + m_ServerUri);
-
-                    stateListener.onDisconnect();
-
-                }
-            };
+//            m_StateListener = new IConnectionStateListener() {
+//                @Override
+//                public  void onConnectFail(String msg) { //通道连接失败
+//                    log("Failed to connect to: " + m_ServerUri);
+//                    log("Failed message: " + msg);
+//                    stateListener.onConnectFail(msg);
+//                }
+//
+//                @Override
+//                public  void onConnected() { // 通道已连接
+//                    log("Connected to: " + m_ServerUri);
+//                    stateListener.onConnected();
+//
+//                    subscribeTopic(null);
+//                }
+//
+//                @Override
+//                public  void onDisconnect() { // 通道断连
+//                    log("Disconnect to: " + m_ServerUri);
+//
+//                    stateListener.onDisconnect();
+//
+//                }
+//            };
         }
     }
 
@@ -208,26 +212,26 @@ public class MqttClient {
     // 订阅结果回调
     public void setSubscribeListener(final SubscribeListener subscribeListener) {
         if (subscribeListener != null) {
-            m_SubscribeListener = new IOnSubscribeListener() {
-                @Override
-                public void onSuccess(String var1) {
-                    log("onSuccess: " + var1);
-                    subscribeListener.onSuccess(var1);
-                }
-
-                @Override
-                public void onFailed(String var1, AError var2) {
-                    log("onFailed: " + var1);
-                    log("onFailed: " + var2.getMsg());
-                    subscribeListener.onFailed(var1, var2);
-                }
-
-                @Override
-                public boolean needUISafety() {
-                    log("SubscribeListener needUISafety");
-                    return subscribeListener.needUISafety();
-                }
-            };
+//            m_SubscribeListener = new IOnSubscribeListener() {
+//                @Override
+//                public void onSuccess(String var1) {
+//                    log("onSuccess: " + var1);
+//                    subscribeListener.onSuccess(var1);
+//                }
+//
+//                @Override
+//                public void onFailed(String var1, AError var2) {
+//                    log("onFailed: " + var1);
+//                    log("onFailed: " + var2.getMsg());
+//                    subscribeListener.onFailed(var1, var2);
+//                }
+//
+//                @Override
+//                public boolean needUISafety() {
+//                    log("SubscribeListener needUISafety");
+//                    return subscribeListener.needUISafety();
+//                }
+//            };
         }
     }
 
@@ -235,24 +239,24 @@ public class MqttClient {
     // 收到MQTT服务器push的消息时回调
     public void setPushListener(final PushListener pushListener) {
         if (pushListener != null) {
-            m_PushListener = new IOnPushListener() {
-
-                @Override
-                public void onCommand(String topic,String data)
-                {
-                    log("onCommand to: " + topic);
-                    log("onCommand to: " + data);
-
-                    pushListener.onCommand(topic, data);
-                }
-
-                @Override
-                public boolean shouldHandle(String topic) {
-                    log("shouldHandle to: " + topic);
-
-                    return pushListener.shouldHandle(topic);
-                }
-            };
+//            m_PushListener = new IOnPushListener() {
+//
+//                @Override
+//                public void onCommand(String topic,String data)
+//                {
+//                    log("onCommand to: " + topic);
+//                    log("onCommand to: " + data);
+//
+//                    pushListener.onCommand(topic, data);
+//                }
+//
+//                @Override
+//                public boolean shouldHandle(String topic) {
+//                    log("shouldHandle to: " + topic);
+//
+//                    return pushListener.shouldHandle(topic);
+//                }
+//            };
         }
     }
 
@@ -260,28 +264,28 @@ public class MqttClient {
     // Publish请求结果回调
     public void setCallListener(final CallListener callListener) {
         if (callListener != null) {
-            m_CallListener = new IOnCallListener() {
-                @Override
-                public void onSuccess(ARequest request, AResponse response) {
-                    log("send , onSuccess");
-
-                    callListener.onSuccess(request, response);
-                }
-
-                @Override
-                public void onFailed(ARequest request, AError error) {
-                    log("send , onFailed: " + error.getMsg());
-
-                    callListener.onFailed(request, error);
-                }
-
-                @Override
-                public boolean needUISafety() {
-                    log("CallListener needUISafety");
-
-                    return callListener.needUISafety();
-                }
-            };
+//            m_CallListener = new IOnCallListener() {
+//                @Override
+//                public void onSuccess(ARequest request, AResponse response) {
+//                    log("send , onSuccess");
+//
+//                    callListener.onSuccess(request, response);
+//                }
+//
+//                @Override
+//                public void onFailed(ARequest request, AError error) {
+//                    log("send , onFailed: " + error.getMsg());
+//
+//                    callListener.onFailed(request, error);
+//                }
+//
+//                @Override
+//                public boolean needUISafety() {
+//                    log("CallListener needUISafety");
+//
+//                    return callListener.needUISafety();
+//                }
+//            };
         }
     }
 

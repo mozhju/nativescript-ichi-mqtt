@@ -5,7 +5,6 @@
       <module fileurl="file://$PROJECT_DIR$/IChiMQTT.iml" filepath="$PROJECT_DIR$/IChiMQTT.iml" />
       <module fileurl="file://$PROJECT_DIR$/IChiPresentation.iml" filepath="$PROJECT_DIR$/IChiPresentation.iml" />
       <module fileurl="file://$PROJECT_DIR$/library/library.iml" filepath="$PROJECT_DIR$/library/library.iml" />
-      <module fileurl="file://$PROJECT_DIR$/library/library.iml" filepath="$PROJECT_DIR$/library/library.iml" />
     </modules>
   </component>
 </project>
